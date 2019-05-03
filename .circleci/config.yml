@@ -48,8 +48,6 @@ jobs: # basic units of work in a run
         path: /tmp/test-results
 
   publish-github-release:
-    requires:
-      - build
     docker:
       - image: cibuilds/github:0.10
     steps:
