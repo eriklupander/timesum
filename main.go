@@ -16,7 +16,7 @@ func main() {
 	})
 
 	if os.Args[1] == "--version" {
-		logrus.Println("0.0.1")
+		logrus.Print("0.0.1")
 		os.Exit(0)
 	}
 
