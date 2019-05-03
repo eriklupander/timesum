@@ -42,12 +42,7 @@ jobs: # basic units of work in a run
           - "/go/pkg/mod"
 
     - store_artifacts: # Upload test summary for display in Artifacts
-        path: /tmp/test-results
-        destination: raw-test-output
+        path: dist/timesum-darwin-amd64
 
     - store_test_results: # Upload test results for display in Test Summary
         path: /tmp/test-results
-
-    - store_binary: # Upload binary
-        path: dist/timesum-darwin-amd64
-
