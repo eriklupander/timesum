@@ -15,6 +15,11 @@ func main() {
 		LogFormat:       "%msg%\n",
 	})
 
+	if os.Args[1] == "--version" {
+		logrus.Println("0.0.1")
+		os.Exit(0)
+	}
+
 	if os.Args[1] == "--help" {
 		logrus.Println("Usage: ./sum startTime lunchDuration endTime")
 		logrus.Println("Example: ./sum 08:30 0:42 17:24")
