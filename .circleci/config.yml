@@ -62,10 +62,6 @@ jobs: # basic units of work in a run
       - attach_workspace:
           at: ./artifacts
       - run:
-          name: "ls"
-          command: |
-            pwd && ls
-      - run:
           name: "Publish Release on GitHub"
           command: |
             VERSION=$(./artifacts/timesum-darwin-amd64 --version)
