@@ -56,7 +56,7 @@ jobs: # basic units of work in a run
       - run:
           name: "Publish Release on GitHub"
           command: |
-            VERSION=$(timesum --version)
+            VERSION=$(timesum-darwin-amd64 --version)
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
 
 workflows:
@@ -64,4 +64,6 @@ workflows:
   build_and_test:
     jobs:
       - build
-      - publish-github-release
+      - publish-github-release:
+        - requires:
+          - build
