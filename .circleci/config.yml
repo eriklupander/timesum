@@ -1,62 +1,62 @@
 version: 2 # use CircleCI 2.0
 jobs: # basic units of work in a run
-  - build: # runs not using Workflows must have a `build` job as entry point
-      docker: # run the steps with Docker
-      # CircleCI Go images available at: https://hub.docker.com/r/circleci/golang/
-      - image: circleci/golang:1.11.4 #
+  build: # runs not using Workflows must have a `build` job as entry point
+    docker: # run the steps with Docker
+    # CircleCI Go images available at: https://hub.docker.com/r/circleci/golang/
+    - image: circleci/golang:1.11.4 #
 
-      # environment variables for the build itself
-      environment:
-        GO111MODULE: "on" # Enable go 1.11 modules support
-        TEST_RESULTS: /tmp/test-results # path to where test results will be saved
+    # environment variables for the build itself
+    environment:
+      GO111MODULE: "on" # Enable go 1.11 modules support
+      TEST_RESULTS: /tmp/test-results # path to where test results will be saved
 
-      # steps that comprise the `build` job
-      steps:
-      - checkout # check out source code to working directory
-      - run: mkdir -p $TEST_RESULTS # create the test results directory
+    # steps that comprise the `build` job
+    steps:
+    - checkout # check out source code to working directory
+    - run: mkdir -p $TEST_RESULTS # create the test results directory
 
-      - restore_cache: # restores saved cache if no changes are detected since last run
-          keys:
-          - go-mod-v1-{{ checksum "go.sum" }}
+    - restore_cache: # restores saved cache if no changes are detected since last run
+        keys:
+        - go-mod-v1-{{ checksum "go.sum" }}
 
-      # Code quality checks
+    # Code quality checks
+    - run:
+        name: Run go vet
+        command: |
+          make vet 2>&1 | tee ${TEST_RESULTS}/go-vet.out
+
+    #  CircleCi's Go Docker image includes netcat
+    #  This allows polling the DB port to confirm it is open before proceeding
+
+    - run:
+        name: Run unit tests
+        # Store the results of our tests in the $TEST_RESULTS directory
+        command: |
+          make test | tee ${TEST_RESULTS}/go-test.out
+
+    - run: make release # pull and build dependencies for the project
+
+    - save_cache: # Store cache in the /go/pkg directory
+        key: go-mod-v1-{{ checksum "go.sum" }}
+        paths:
+          - "/go/pkg/mod"
+
+    - store_artifacts: # Upload test summary for display in Artifacts
+        path: dist/timesum-darwin-amd64
+
+    - store_test_results: # Upload test results for display in Test Summary
+        path: /tmp/test-results
+
+  publish-github-release:
+    requires:
+      - build
+    docker:
+      - image: cibuilds/github:0.10
+    steps:
+      - attach_workspace:
+          at: ./artifacts
       - run:
-          name: Run go vet
+          name: "Publish Release on GitHub"
           command: |
-            make vet 2>&1 | tee ${TEST_RESULTS}/go-vet.out
-
-      #  CircleCi's Go Docker image includes netcat
-      #  This allows polling the DB port to confirm it is open before proceeding
-
-      - run:
-          name: Run unit tests
-          # Store the results of our tests in the $TEST_RESULTS directory
-          command: |
-            make test | tee ${TEST_RESULTS}/go-test.out
-
-      - run: make release # pull and build dependencies for the project
-
-      - save_cache: # Store cache in the /go/pkg directory
-          key: go-mod-v1-{{ checksum "go.sum" }}
-          paths:
-            - "/go/pkg/mod"
-
-      - store_artifacts: # Upload test summary for display in Artifacts
-          path: dist/timesum-darwin-amd64
-
-      - store_test_results: # Upload test results for display in Test Summary
-          path: /tmp/test-results
-
-  - publish-github-release:
-      requires:
-        - build
-      docker:
-        - image: cibuilds/github:0.10
-      steps:
-        - attach_workspace:
-            at: ./artifacts
-        - run:
-            name: "Publish Release on GitHub"
-            command: |
-              VERSION=$(timesum --version)
-              ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
+            VERSION=$(timesum --version)
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
