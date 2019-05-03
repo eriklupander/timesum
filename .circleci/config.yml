@@ -64,7 +64,7 @@ jobs: # basic units of work in a run
       - run:
           name: "Publish Release on GitHub"
           command: |
-            VERSION=$(./artifacts/timesum-darwin-amd64 --version)
+            VERSION=0.0.1
             echo $VERSION && echo $GITHUB_TOKEN && echo $CIRCLE_PROJECT_USERNAME && echo $CIRCLE_PROJECT_REPONAME && echo $CIRCLE_SHA1 &&
             ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
 
