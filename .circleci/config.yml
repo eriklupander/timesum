@@ -34,7 +34,7 @@ jobs: # basic units of work in a run
         command: |
           make test | tee ${TEST_RESULTS}/go-test.out
 
-    - run: make build # pull and build dependencies for the project
+    - run: make release # pull and build dependencies for the project
 
     - save_cache: # Store cache in the /go/pkg directory
         key: go-mod-v1-{{ checksum "go.sum" }}
@@ -47,3 +47,7 @@ jobs: # basic units of work in a run
 
     - store_test_results: # Upload test results for display in Test Summary
         path: /tmp/test-results
+
+    - store_binary: # Upload binary
+        path: dist/timesum-darwin-amd64
+
