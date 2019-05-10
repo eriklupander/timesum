@@ -1,0 +1,39 @@
+# Make sure to check the documentation at http://goreleaser.com
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+    goarch:
+      - amd64
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.buildSource=binaryRelease
+
+archive:
+  replacements:
+    darwin: Darwin
+    amd64: x86_64
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  name_template: '{{ .Tag }}-next'
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^dist:'
+brew:
+  # Repository to push the tap to.
+  github:
+    owner: eriklupander
+    name: homebrew-tap
+
+  # Your app's homepage.
+  # Default is empty.
+  homepage: 'https://github.com/eriklupander/timesum/'
+
+  # Your app's description.
+  # Default is empty.
+  description: 'A simple terminal UI for calculating time worked, written in Go'
+
+# test comment to see if goreleaser only releases on new commits
