@@ -54,9 +54,9 @@ jobs: # basic units of work in a run
 
   release:
     docker:
-      - image: circleci/golang:1.11.4
-      environment:
-        GO111MODULE: "on" # Enable go 1.11 modules support
+    - image: circleci/golang:1.11.4
+    environment:
+      GO111MODULE: "on" # Enable go 1.11 modules support
 
     working_directory: /go/src/github.com/eriklupander/timesum
     steps:
