@@ -20,8 +20,8 @@ build:
 	GO111MODULE=on go build -o timesum
 
 release:
-	mkdir -p dist
-	GO111MODULE=on go build -o dist/timesum-darwin-amd64
+	mkdir -p release
+	GO111MODULE=on go build -o release/timesum-darwin-amd64
 
 run: build
 	./dist/timesum-darwin-amd64
