@@ -42,7 +42,7 @@ jobs: # basic units of work in a run
           - "/go/pkg/mod"
 
     - store_artifacts: # Upload test summary for display in Artifacts
-        path: dist/timesum-darwin-amd64
+        path: release/timesum-darwin-amd64
 
     - store_test_results: # Upload test results for display in Test Summary
         path: /tmp/test-results
@@ -50,7 +50,7 @@ jobs: # basic units of work in a run
     - persist_to_workspace:
         # Must be an absolute path, or relative path from working_directory. This is a directory on the container which is
         # taken to be the root directory of the workspace.
-        root: dist
+        root: release
         # Must be relative path from root
         paths:
           - timesum-darwin-amd64
