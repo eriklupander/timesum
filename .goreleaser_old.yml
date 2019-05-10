@@ -1,42 +1,36 @@
-# This is an example goreleaser.yaml file with some sane defaults.
 # Make sure to check the documentation at http://goreleaser.com
-before:
-  hooks:
-    # you may remove this if you don't use vgo
-    - go mod download
 builds:
-- env:
-  - CGO_ENABLED=0
-  - GO111MODULE=on
-archives:
-- replacements:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+    goarch:
+      - amd64
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}} -X main.buildSource=binaryRelease
+
+archive:
+  replacements:
     darwin: Darwin
-    linux: Linux
-    windows: Windows
-    386: i386
     amd64: x86_64
 checksum:
   name_template: 'checksums.txt'
 snapshot:
-  name_template: "{{ .Tag }}-next"
+  name_template: '{{ .Tag }}-next'
 changelog:
   sort: asc
   filters:
     exclude:
-    - '^docs:'
-    - '^test:'
-
+      - '^dist:'
 brew:
   # Repository to push the tap to.
   github:
     owner: eriklupander
     name: homebrew-tap
 
-  url_template: "https://github.com/eriklupander/timesum/releases/{{ .Tag }}/{{ .ArtifactName }}"
-
   # Your app's homepage.
   # Default is empty.
-  homepage: 'https://github.com/eriklupander/timesum'
+  homepage: 'https://github.com/eriklupander/timesum/'
 
   # Your app's description.
   # Default is empty.
